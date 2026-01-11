@@ -55,29 +55,29 @@ class UserUpdate(BaseModel):
     phone_number: Optional[str] = None
     emergency_phone_number: Optional[str] = None
 
-    # @field_validator("phone_number", "emergency_phone_number")
-    # @classmethod
-    # def validate_phone(cls, value):
-    #     if value is None:
-    #         return value
+    @field_validator("phone_number", "emergency_phone_number")
+    @classmethod
+    def validate_phone(cls, value):
+        if value is None:
+            return value
 
-    #     try:
-    #         phone = phonenumbers.parse(value, "IN")
-    #         if not phonenumbers.is_valid_number(phone):
-    #             raise ValueError("Invalid phone number")
-    #     except phonenumbers.NumberParseException:
-    #         raise ValueError("Invalid phone number format")
+        try:
+            phone = phonenumbers.parse(value, "IN")
+            if not phonenumbers.is_valid_number(phone):
+                raise ValueError("Invalid phone number")
+        except phonenumbers.NumberParseException:
+            raise ValueError("Invalid phone number format")
 
-    #     return phonenumbers.format_number(
-    #         phone,
-    #         phonenumbers.PhoneNumberFormat.E164
-    #     )
+        return phonenumbers.format_number(
+            phone,
+            phonenumbers.PhoneNumberFormat.E164
+        )
 
-    # @model_validator(mode="after")
-    # def check_numbers_not_same(self):
-    #     if self.emergency_phone_number and self.phone_number == self.emergency_phone_number:
-    #         raise ValueError("Emergency contact must be different")
-    #     return self
+    @model_validator(mode="after")
+    def check_numbers_not_same(self):
+        if self.emergency_phone_number and self.phone_number == self.emergency_phone_number:
+            raise ValueError("Emergency contact must be different")
+        return self
 
 # --------------------
 # For POST /users
