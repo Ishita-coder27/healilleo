@@ -1,13 +1,14 @@
 from fastapi import FastAPI
+from app.api.routes import users
 
-app = FastAPI(title="Hellio Health AI")
+app = FastAPI()
 
-@app.get("/")
+@app.get("/health-check")
 def health_check():
-    return {"status": "Backend is running"}
-
-from app.db.session import engine
+    return {"status": "ok"}
 
 @app.get("/db-test")
 def db_test():
     return {"db": "connected"}
+
+app.include_router(users.router)
