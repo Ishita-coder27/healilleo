@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api.routes import users
+from app.api.routes import users, medical_reports
 
 app = FastAPI()
 
@@ -12,3 +12,4 @@ def db_test():
     return {"db": "connected"}
 
 app.include_router(users.router)
+app.include_router(medical_reports.router)
