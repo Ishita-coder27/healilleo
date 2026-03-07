@@ -11,8 +11,8 @@ router = APIRouter(
 
 # GET all users
 @router.get("/", response_model=list[UserRead])
-def get_users(db: Session = Depends(get_db)):
-    return crud_user.get_all_users(db)
+def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud_user.get_all_users(db, skip=skip, limit=limit)
 
 # GET a user by ID
 @router.get("/{user_id}", response_model=UserRead)
@@ -23,15 +23,15 @@ def fetch_user(user_id: int, db: Session = Depends(get_db)):
     return user
 
 # POST add a new user
-@router.post("/add", response_model=UserRead)
+@router.post("/add", response_model=UserRead, status_code=201)
 def add_new_user(user: UserCreate, db: Session = Depends(get_db)):
     if crud_user.get_user_by_email(db, user.email):
         raise HTTPException(status_code=400, detail="Email already exists")
     return crud_user.create_user(db, user)
 
+# PATCH update a user
 @router.patch("/update/{user_id}", response_model=UserRead)
 def update_a_user(user_id: int, user_data: UserUpdate, db: Session = Depends(get_db)):
-
     user = crud_user.get_user_by_id(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -41,15 +41,17 @@ def update_a_user(user_id: int, user_data: UserUpdate, db: Session = Depends(get
         if existing_user and existing_user.id != user_id:
             raise HTTPException(status_code=400, detail="Email already exists")
 
-    return crud_user.update_user(db, user_id, user_data)
+    try:
+        return crud_user.update_user(db, user_id, user_data)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
-@router.delete("/delete/{user_id}")
+# DELETE a user
+@router.delete("/delete/{user_id}", status_code=200)
 def delete_a_user(user_id: int, db: Session = Depends(get_db)):
-
     user = crud_user.get_user_by_id(db, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    
-    crud_user.delete_user(db, user_id)
-    return "User deleted successfully"
 
+    crud_user.delete_user(db, user_id)
+    return {"detail": "User deleted successfully"}

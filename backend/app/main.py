@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.api.routes import users, medical_reports
+# , vitals, report_vitals
 
 app = FastAPI()
 
@@ -13,3 +14,5 @@ def db_test():
 
 app.include_router(users.router)
 app.include_router(medical_reports.router)
+# app.include_router(vitals.router)
+# app.include_router(report_vitals.router)
