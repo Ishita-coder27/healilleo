@@ -1,0 +1,11 @@
+{
+  "name": "Rohit",
+  "age": 22,
+  "vitals":
+  {
+    "HbA1c": 7.2,
+    "BP": "140/90",
+    "BMI": 28,
+    "Cholesterol": 210
+  }
+}
