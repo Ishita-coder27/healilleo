@@ -1,4 +1,28 @@
+# Python
 ai_env/
 .env
 __pycache__/
 *.pyc
+
+# Logs
+logs
+*.log
+
+# Node (keep only if frontend exists)
+node_modules/
+dist/
+dist-ssr/
+
+# Local files
+*.local
+
+# Editor files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
