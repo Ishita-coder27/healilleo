@@ -27,3 +27,5 @@ class User(Base):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+
+    health_snapshot = relationship("UserHealthSnapshot", back_populates="user")

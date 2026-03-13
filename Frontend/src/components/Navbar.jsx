@@ -191,7 +191,7 @@ export default function Navbar({ openBMI }) {
   // ── Medication handlers ──
   const handleSaveMedication = async () => {
     if (!medForm.medication_name || !medForm.start_date) {
-      setModalMsg("❌ Medication name and start date are required."); return;
+      setModalMsg("❌ Medication name, start date, end date and time are required."); return;
     }
     setSaving(true); setModalMsg("");
     try {
@@ -517,12 +517,12 @@ export default function Navbar({ openBMI }) {
                         <input type="date" value={medForm.start_date} onChange={(e) => setMedForm({ ...medForm, start_date: e.target.value })} />
                       </div>
                       <div className="hn-form-field">
-                        <label>End Date</label>
+                        <label>End Date <span className="hn-required">*</span></label>
                         <input type="date" value={medForm.end_date} onChange={(e) => setMedForm({ ...medForm, end_date: e.target.value })} />
                       </div>
                     </div>
                     <div className="hn-form-field">
-                      <label>Next Reminder Time</label>
+                      <label>Next Reminder Time <span className="hn-required">*</span></label>
                       <input type="datetime-local" value={medForm.next_reminder_time} onChange={(e) => setMedForm({ ...medForm, next_reminder_time: e.target.value })} />
                     </div>
                     <div className="hn-form-field">

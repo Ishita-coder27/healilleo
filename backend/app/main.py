@@ -9,6 +9,8 @@ from app.api.routes import appointments, medications
 from contextlib import asynccontextmanager
 from app.scheduler import start_scheduler
 
+import app.models
+
 @asynccontextmanager
 async def lifespan(app):
     scheduler = start_scheduler()

@@ -1,5 +1,5 @@
 import HamburgerMenu from "./HamburgerMenu";
-import "../styles/dashboard.css";
+import "../pages/Dashboard.css";
 
 function DashboardLayout({ title, subtitle, children }) {
   return (

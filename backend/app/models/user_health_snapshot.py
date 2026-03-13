@@ -30,3 +30,4 @@ class UserHealthSnapshot(Base):
 
     # Relationships
     user = relationship("User", back_populates="health_snapshot")
+    

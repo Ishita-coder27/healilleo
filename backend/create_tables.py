@@ -14,7 +14,9 @@ from app.models.vitals import Vital                                 # noqa: F401
 from app.models.medical_reports import MedicalReport                # noqa: F401
 from app.models.report_vitals import ReportVital                    # noqa: F401  (existing junction table — untouched)
 from app.models.vital_extraction import VitalExtraction             # noqa: F401  ← new
-# from app.models.user_health_snapshot import UserHealthSnapshot    # noqa: F401  (uncomment if you have this)
+from app.models.user_health_snapshot import UserHealthSnapshot      # noqa: F401  (uncomment if you have this)
+from app.models.appointments import Appointment
+from app.models.medications import Medication
 
 
 def create_tables():
