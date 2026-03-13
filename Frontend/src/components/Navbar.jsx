@@ -74,15 +74,15 @@ export default function Navbar() {
 
               {item.dropdown && activeDropdown === item.label && (
                 <div className="hn-dropdown">
-                  {item.dropdown.map((d) => (
-                    <a className="hn-dd-item" href="#" key={d.label}>
-                      <span className="hn-dd-icon">{d.icon}</span>
-                      <div>
-                        <div className="hn-dd-label">{d.label}</div>
-                        <div className="hn-dd-desc">{d.desc}</div>
-                      </div>
-                    </a>
-                  ))}
+{item.dropdown.map((d) => (
+  <a className="hn-dd-item" href={d.label === "View All Reports" ? "/medical-reports" : "#"} key={d.label}>
+    <span className="hn-dd-icon">{d.icon}</span>
+    <div>
+      <div className="hn-dd-label">{d.label}</div>
+      <div className="hn-dd-desc">{d.desc}</div>
+    </div>
+  </a>
+))}
                 </div>
               )}
             </li>

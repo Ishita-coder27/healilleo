@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 from app.db.base import Base
 
@@ -19,3 +20,10 @@ class User(Base):
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc),
                         onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+
+    # ── Relationships ──────────────────────────────────────────────────────────
+    vital_extractions = relationship(
+        "VitalExtraction",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )

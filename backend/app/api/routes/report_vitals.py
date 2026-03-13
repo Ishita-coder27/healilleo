@@ -1,82 +1,86 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+"""
+api/routes/report_vitals.py
+
+All endpoints require a valid JWT (get_current_user dependency).
+Users can only save / read / delete their own extraction records.
+
+Endpoints:
+  POST   /api/report-vitals/save-extraction   → save a new extraction
+  GET    /api/report-vitals/my-extractions    → list current user's records
+  GET    /api/report-vitals/{id}              → get one full record
+  DELETE /api/report-vitals/{id}              → delete one record
+"""
+
+from typing import List
+
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
+from app.core.auth import get_current_user
 from app.db.session import get_db
+from app.models.user import User
 from app.schemas.report_vitals import (
-    ReportVitalCreate,
-    ReportVitalUpdate,
-    ReportVitalRead
+    VitalExtractionSaveRequest,
+    VitalExtractionSaveResponse,
+    VitalExtractionListItem,
+    VitalExtractionDetailResponse,
 )
-from app.crud import report_vitals as crud_report_vitals
-from app.crud import medical_reports as crud_reports
-from app.crud import vitals as crud_vitals
+import app.crud.report_vitals as crud
 
-router = APIRouter(prefix="/reports", tags=["Report Vitals"])
+router = APIRouter(
+    prefix="/report-vitals",
+    tags=["Report Vitals"],
+)
+
 
 @router.post(
-    "/{report_id}/vitals",
-    response_model=ReportVitalRead,
-    status_code=status.HTTP_201_CREATED
+    "/save-extraction",
+    response_model=VitalExtractionSaveResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Save vitals extracted from a PDF (ownership enforced)",
 )
-def add_vital_to_report(
-    report_id: int,
-    vital: ReportVitalCreate,
-    db: Session = Depends(get_db)
+def save_extraction(
+    payload: VitalExtractionSaveRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    if not crud_reports.get_medical_report_by_id(db, report_id):
-        raise HTTPException(status_code=404, detail="Report not found")
+    return crud.save_extraction(db=db, payload=payload, current_user=current_user)
 
-    if not crud_vitals.get_vital_by_id(db, vital.vital_id):
-        raise HTTPException(status_code=404, detail="Vital not found")
-
-    return crud_report_vitals.create_report_vital(
-        db=db,
-        report_id=report_id,
-        vital_data=vital
-    )
 
 @router.get(
-    "/{report_id}/vitals",
-    response_model=list[ReportVitalRead]
+    "/my-extractions",
+    response_model=List[VitalExtractionListItem],
+    summary="List all extraction records saved by the current user",
 )
-def list_report_vitals(
-    report_id: int,
-    db: Session = Depends(get_db)
+def list_my_extractions(
+    skip:  int = Query(default=0,  ge=0),
+    limit: int = Query(default=20, ge=1, le=100),
+    db:    Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    if not crud_reports.get_medical_report_by_id(db, report_id):
-        raise HTTPException(status_code=404, detail="Report not found")
+    return crud.get_my_extractions(db=db, current_user=current_user, skip=skip, limit=limit)
 
-    return crud_report_vitals.get_vitals_for_report(db, report_id)
 
-@router.patch(
-    "/vitals/{report_vital_id}",
-    response_model=ReportVitalRead
+@router.get(
+    "/{extraction_id}",
+    response_model=VitalExtractionDetailResponse,
+    summary="Get full detail of one extraction record (must belong to current user)",
 )
-def update_report_vital(
-    report_vital_id: int,
-    vital_data: ReportVitalUpdate,
-    db: Session = Depends(get_db)
+def get_extraction(
+    extraction_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    vital = crud_report_vitals.update_report_vital(
-        db,
-        report_vital_id,
-        vital_data
-    )
-    if not vital:
-        raise HTTPException(status_code=404, detail="Report vital not found")
-    return vital
+    return crud.get_extraction_by_id(db=db, extraction_id=extraction_id, current_user=current_user)
+
 
 @router.delete(
-    "/vitals/{report_vital_id}",
-    status_code=status.HTTP_204_NO_CONTENT
+    "/{extraction_id}",
+    summary="Delete an extraction record (must belong to current user)",
 )
-def delete_report_vital(
-    report_vital_id: int,
-    db: Session = Depends(get_db)
+def delete_extraction(
+    extraction_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    deleted = crud_report_vitals.delete_report_vital(
-        db,
-        report_vital_id
-    )
-    if not deleted:
-        raise HTTPException(status_code=404, detail="Report vital not found")
+    return crud.delete_extraction(db=db, extraction_id=extraction_id, current_user=current_user)

@@ -1,0 +1,162 @@
+{
+  "RDW CV": {
+    "aliases": [
+      "RDW CV"
+    ],
+    "unit": "%",
+    "category": "CBC",
+    "type": "numeric",
+    "normal": [
+      11.6,
+      14.0
+    ]
+  },
+  "Platelet Count": {
+    "aliases": [
+      "Platelet Count"
+    ],
+    "unit": "/cmm",
+    "category": "CBC",
+    "type": "numeric",
+    "normal": [
+      50000.0,
+      41000.0
+    ]
+  },
+  "Cholesterol": {
+    "aliases": [
+      "Cholesterol"
+    ],
+    "unit": "mg/dL",
+    "category": "Lipid Panel",
+    "type": "numeric"
+  },
+  "Triglyceride": {
+    "aliases": [
+      "Triglyceride"
+    ],
+    "unit": "mg/dL",
+    "category": "Lipid Panel",
+    "type": "numeric"
+  },
+  "Direct LDL": {
+    "aliases": [
+      "Direct LDL"
+    ],
+    "unit": "mg/dL",
+    "category": "Lipid Panel",
+    "type": "numeric"
+  },
+  "CHOL/HDL Ratio": {
+    "aliases": [
+      "CHOL/HDL Ratio"
+    ],
+    "unit": "?",
+    "category": "Lipid Panel",
+    "type": "numeric"
+  },
+  "LDL/HDL Ratio": {
+    "aliases": [
+      "LDL/HDL Ratio"
+    ],
+    "unit": "?",
+    "category": "Lipid Panel",
+    "type": "numeric"
+  },
+  "Fasting Blood Sugar": {
+    "aliases": [
+      "Fasting Blood Sugar"
+    ],
+    "unit": "mg/dL",
+    "category": "Metabolic Panel",
+    "type": "numeric",
+    "normal": [
+      74.0,
+      106.0
+    ]
+  },
+  "T3 - Triiodothyronine": {
+    "aliases": [
+      "T3 - Triiodothyronine"
+    ],
+    "unit": "ng/mL",
+    "category": "Thyroid",
+    "type": "numeric",
+    "normal": [
+      0.58,
+      1.59
+    ]
+  },
+  "T4 - Thyroxine": {
+    "aliases": [
+      "T4 - Thyroxine"
+    ],
+    "unit": "mg/mL",
+    "category": "Thyroid",
+    "type": "numeric",
+    "normal": [
+      4.87,
+      11.72
+    ]
+  },
+  "TSH - Thyroid Stimulating Hormone": {
+    "aliases": [
+      "TSH - Thyroid Stimulating Hormone"
+    ],
+    "unit": "microIU/mL",
+    "category": "Thyroid",
+    "type": "numeric",
+    "normal": [
+      0.35,
+      4.94
+    ]
+  },
+  "Conjugated Bilirubin": {
+    "aliases": [
+      "Conjugated Bilirubin"
+    ],
+    "unit": "mg/dL",
+    "category": "Liver Function",
+    "type": "numeric",
+    "normal": [
+      0.0,
+      0.3
+    ]
+  },
+  "Unconjugated Bilirubin": {
+    "aliases": [
+      "Unconjugated Bilirubin"
+    ],
+    "unit": "mg/dL",
+    "category": "Liver Function",
+    "type": "numeric",
+    "normal": [
+      0.0,
+      1.1
+    ]
+  },
+  "Total Erythrocyte Count (TRBC)": {
+    "aliases": [
+      "Total Erythrocyte Count (TRBC)"
+    ],
+    "unit": "millions/cu.mm",
+    "category": "CBC",
+    "type": "numeric",
+    "normal": [
+      3.8,
+      4.8
+    ]
+  },
+  "TLC (Total Leucocyte Count)": {
+    "aliases": [
+      "TLC (Total Leucocyte Count)"
+    ],
+    "unit": "cells/cu.mm",
+    "category": "CBC",
+    "type": "numeric",
+    "normal": [
+      4000.0,
+      11000.0
+    ]
+  }
+}

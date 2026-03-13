@@ -1,26 +1,39 @@
+"""
+backend/app/main.py
+"""
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import users, medical_reports, auth
 
-app = FastAPI(title="Heallio API")
+from app.api.routes import auth, medical_reports, report_vitals, reports, users, vitals
 
-# ── CORS ──────────────────────────────────────────────────────
+app = FastAPI(
+    title="AI Engine Backend",
+    description="Medical AI backend — vitals extraction, reports, RAG.",
+    version="1.0.0",
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:5174",
-    "http://127.0.0.1:5174"],   # Vite dev server
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ── Routes ────────────────────────────────────────────────────
-app.include_router(auth.router)
-app.include_router(users.router)
-app.include_router(medical_reports.router)
+app.include_router(auth.router,            prefix="/api")
+app.include_router(users.router,           prefix="/api")
+app.include_router(vitals.router,          prefix="/api")
+app.include_router(medical_reports.router, prefix="/api")
+app.include_router(report_vitals.router,   prefix="/api")   # handles /api/report-vitals/*
+app.include_router(reports.router,         prefix="/api")   # handles /api/reports/* (public analysis/chat)
 
-@app.get("/health-check")
-def health_check():
-    return {"status": "ok"}
+
+@app.get("/")
+def root():
+    return {"status": "ok", "message": "AI Engine Backend is running."}
+
+
+@app.get("/health")
+def health():
+    return {"status": "healthy"}

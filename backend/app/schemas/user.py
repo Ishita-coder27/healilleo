@@ -3,7 +3,8 @@ from typing import Optional
 from datetime import datetime
 
 
-# ── Create (register) ─────────────────────────────────────────
+# ── Request schemas ────────────────────────────────────────────────────────────
+
 class UserCreate(BaseModel):
     name: str
     email: EmailStr
@@ -14,17 +15,17 @@ class UserCreate(BaseModel):
     emergency_phone_number: Optional[str] = None
 
 
-# ── Update ────────────────────────────────────────────────────
-class UserUpdate(BaseModel):
-    name: Optional[str] = None
-    email: Optional[EmailStr] = None
-    age: Optional[int] = None
-    gender: Optional[str] = None
-    phone_number: Optional[str] = None
-    emergency_phone_number: Optional[str] = None
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
 
 
-# ── Read (response) ───────────────────────────────────────────
+class GoogleAuthRequest(BaseModel):
+    token: str   # Google ID token from frontend
+
+
+# ── Response schemas ───────────────────────────────────────────────────────────
+
 class UserRead(BaseModel):
     id: int
     name: str
@@ -34,26 +35,25 @@ class UserRead(BaseModel):
     age: Optional[int] = None
     gender: Optional[str] = None
     phone_number: Optional[str] = None
+    emergency_phone_number: Optional[str] = None
     is_active: bool
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
-# ── Login request ─────────────────────────────────────────────
-class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str
-
-
-# ── Google token request ──────────────────────────────────────
-class GoogleAuthRequest(BaseModel):
-    token: str   # Google credential (JWT from Google One Tap)
-
-
-# ── JWT token response ────────────────────────────────────────
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: UserRead
+
+
+# ── Update schema ──────────────────────────────────────────────────────────────
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    age: Optional[int] = None
+    gender: Optional[str] = None
+    phone_number: Optional[str] = None
+    emergency_phone_number: Optional[str] = None
+    picture: Optional[str] = None
