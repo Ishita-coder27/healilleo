@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.medical_reports import MedicalReport
+import os
 
 
 def create_medical_report(db: Session, user_id: int, file_name: str, file_path: str, file_type: str):
@@ -46,6 +47,18 @@ def delete_medical_report(db: Session, id: int):
     report = get_medical_report_by_id(db, id)
     if not report:
         return None
+    db.delete(report)
+    db.commit()
+    return True
+
+
+def delete_medical_report(db: Session, id: int):
+    report = get_medical_report_by_id(db, id)
+    if not report:
+        return None
+    # Delete file from disk
+    if os.path.exists(report.file_path):
+        os.remove(report.file_path)
     db.delete(report)
     db.commit()
     return True

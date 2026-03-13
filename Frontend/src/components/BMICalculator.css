@@ -1,0 +1,96 @@
+.bmi-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,0.55);
+  backdrop-filter:blur(6px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:11000;
+  animation:fadeUp .25s ease;
+}
+
+.bmi-modal{
+  width:360px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-lg);
+  padding:24px;
+  font-family:var(--font-body);
+}
+
+.bmi-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.bmi-header h2{
+  font-family:var(--font-head);
+  font-size:20px;
+}
+
+.bmi-close{
+  border:none;
+  background:transparent;
+  font-size:18px;
+  cursor:pointer;
+  color:var(--text-2);
+}
+
+.bmi-body{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.bmi-field label{
+  font-size:13px;
+  color:var(--text-2);
+}
+
+.bmi-field input{
+  width:100%;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  font-family:var(--font-body);
+}
+
+.bmi-field input:focus{
+  outline:none;
+  border-color:var(--cyan);
+  box-shadow:0 0 0 2px rgba(6,182,212,0.15);
+}
+
+.bmi-calc-btn{
+  margin-top:8px;
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  background:var(--grad-primary);
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.bmi-result{
+  margin-top:14px;
+  padding:14px;
+  background:var(--surface-2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  text-align:center;
+}
+
+.bmi-value{
+  font-family:var(--font-head);
+  font-size:28px;
+}
+
+.bmi-category{
+  font-size:14px;
+  color:var(--text-2);
+}

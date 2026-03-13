@@ -32,10 +32,7 @@
   margin-right: 20px;
 }
 
-.hn-logo-icon {
-  font-size: 22px;
-  line-height: 1;
-}
+.hn-logo-icon { font-size: 22px; line-height: 1; }
 
 .hn-logo-text {
   font-family: 'DM Serif Display', serif;
@@ -59,6 +56,16 @@
   position: relative;
 }
 
+/* ── Bridge: fills gap between button and dropdown so hover doesn't break ── */
+.hn-item.has-dropdown::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 12px;
+}
+
 .hn-link {
   display: flex;
   align-items: center;
@@ -78,15 +85,12 @@
 }
 
 .hn-link:hover,
-.hn-link.active {
+.hn-item:hover .hn-link {
   background: #f1f5f9;
   color: #0b1f3a;
 }
 
-.hn-link-icon {
-  font-size: 15px;
-  line-height: 1;
-}
+.hn-link-icon { font-size: 15px; line-height: 1; }
 
 .hn-chevron {
   width: 10px;
@@ -96,11 +100,15 @@
   flex-shrink: 0;
 }
 
+.hn-item:hover .hn-chevron {
+  transform: rotate(180deg);
+}
+
 .hn-chevron.flipped {
   transform: rotate(180deg);
 }
 
-/* ─── Dropdown ────────────────────────────────────────────── */
+/* ─── Dropdown — CSS hover (reliable, no gap issues) ─────── */
 .hn-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -111,16 +119,25 @@
   box-shadow: 0 8px 32px rgba(11, 31, 58, 0.13);
   padding: 8px;
   min-width: 260px;
-  animation: dropIn 0.18s ease both;
   z-index: 300;
   display: flex;
   flex-direction: column;
   gap: 2px;
+
+  /* Hidden by default */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  pointer-events: none;
 }
 
-@keyframes dropIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* Show on hover of parent li */
+.hn-item:hover .hn-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .hn-dd-item {
@@ -132,11 +149,14 @@
   text-decoration: none;
   transition: background 0.15s;
   cursor: pointer;
+  background: none;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  width: 100%;
+  text-align: left;
 }
 
-.hn-dd-item:hover {
-  background: #f1f5f9;
-}
+.hn-dd-item:hover { background: #f1f5f9; }
 
 .hn-dd-icon {
   font-size: 20px;
@@ -336,8 +356,6 @@
 
 .hn-mobile-link:hover { background: #f1f5f9; }
 
-.hn-chevron.flipped { transform: rotate(180deg); }
-
 .hn-mobile-dropdown {
   display: flex;
   flex-direction: column;
@@ -357,6 +375,12 @@
   font-weight: 500;
   color: #374151;
   transition: background 0.15s;
+  background: none;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
 }
 
 .hn-mobile-dd-item:hover { background: #f1f5f9; }
@@ -381,10 +405,290 @@
 @media (max-width: 900px) {
   .hn-links,
   .hn-right { display: none; }
-
   .hn-hamburger { display: flex; }
 }
 
 @media (max-width: 480px) {
   .hn-inner { padding: 0 16px; }
 }
+
+/* ─── Modal ───────────────────────────────────────────────── */
+.hn-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 31, 58, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.hn-modal {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(11, 31, 58, 0.2);
+  width: 100%;
+  max-width: 480px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  animation: modalIn 0.2s ease both;
+  overflow: hidden;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.hn-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.hn-modal-header h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  color: #0b1f3a;
+  margin: 0;
+}
+
+.hn-modal-close {
+  background: #f1f5f9;
+  border: none;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #64748b;
+  transition: background 0.15s;
+}
+
+.hn-modal-close:hover { background: #e2e8f0; }
+
+.hn-modal-body {
+  padding: 16px 24px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.hn-modal-body.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 32px 24px;
+}
+
+.hn-modal-msg {
+  font-size: 15px;
+  color: #374151;
+  text-align: center;
+}
+
+.hn-modal-btn {
+  padding: 10px 28px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #0b1f3a, #0d9488);
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.hn-modal-empty {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 14px;
+  padding: 24px 0;
+}
+
+/* ─── Report list ─────────────────────────────────────────── */
+.hn-report-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hn-report-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  transition: background 0.15s;
+}
+
+.hn-report-item:hover { background: #f1f5f9; }
+
+.hn-report-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.hn-report-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.hn-report-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hn-report-date {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+.hn-report-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.hn-report-badge.processed {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.hn-report-badge.pending {
+  background: #fef9c3;
+  color: #ca8a04;
+}
+
+.hn-delete-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #fca5a5;
+  background: #fff5f5;
+  color: #dc2626;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.hn-delete-btn:hover { background: #fee2e2; }
+.hn-delete-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ─── Form styles ─────────────────────────────────────────── */
+.hn-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hn-form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.hn-form-row .hn-form-field {
+  flex: 1;
+}
+
+.hn-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.hn-form-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.hn-required {
+  color: #dc2626;
+}
+
+.hn-form-field input,
+.hn-form-field textarea {
+  padding: 9px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-family: 'DM Sans', sans-serif;
+  color: #0f172a;
+  background: #f8fafc;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.hn-form-field input:focus,
+.hn-form-field textarea:focus {
+  border-color: #0d9488;
+  background: #fff;
+}
+
+.hn-form-field textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+.hn-form-msg {
+  font-size: 13.5px;
+  color: #374151;
+  margin: 0;
+  padding: 8px 12px;
+  background: #f0f5f9;
+  border-radius: 8px;
+}
+
+.hn-modal-btn.full {
+  width: 100%;
+  padding: 11px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* ─── Report notes ────────────────────────────────────────── */
+.hn-report-notes {
+  font-size: 11.5px;
+  color: #64748b;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hn-view-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #2563eb;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.hn-view-btn:hover { background: #dbeafe; }
+.hn-view-btn:disabled { opacity: 0.5; cursor: not-allowed; }

@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+
+.tracker-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 11000;
+  animation: trackerFadeIn 0.2s ease both;
+}
+
+@keyframes trackerFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.tracker-modal {
+  background: #ffffff;
+  border: 1px solid #E2E8F0;
+  border-radius: 18px;
+  padding: 32px 28px 28px;
+  width: min(440px, calc(100vw - 40px));
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: trackerSlideUp 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes trackerSlideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* ── Header ── */
+.tracker-modal h2 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1E293B;
+  margin: 0 0 4px;
+  letter-spacing: -0.3px;
+}
+
+/* ── Label ── */
+.tracker-modal label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #94A3B8;
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* ── Number input ── */
+.tracker-modal input[type="number"] {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  color: #1E293B;
+  background: #F8FAFD;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.tracker-modal input[type="number"]:focus {
+  border-color: #0EA5A4;
+  box-shadow: 0 0 0 3px rgba(14, 165, 164, 0.12);
+}
+
+/* ── Slider section ── */
+.slider-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #F8FAFD;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.slider-section button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #E2E8F0;
+  background: #ffffff;
+  color: #64748B;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+}
+.slider-section button:hover {
+  background: #0EA5A4;
+  border-color: #0EA5A4;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Range input */
+.slider-section input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 5px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #0EA5A4, #06B6D4);
+  outline: none;
+  cursor: pointer;
+}
+.slider-section input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #0EA5A4;
+  box-shadow: 0 2px 6px rgba(14, 165, 164, 0.3);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.slider-section input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* ── Today's value display ── */
+.tracker-modal p {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #64748B;
+  margin: 0;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* ── Ask LLM button ── */
+.ask-btn {
+  width: 100%;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #06B6D4, #8B5CF6);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 2px 12px rgba(6, 182, 212, 0.3);
+}
+.ask-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(6, 182, 212, 0.4);
+}
+
+/* ── Close button ── */
+.close-btn {
+  width: 100%;
+  padding: 10px 16px;
+  background: #F8FAFD;
+  color: #64748B;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  margin-top: 4px;
+}
+.close-btn:hover {
+  background: #FEF2F2;
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #EF4444;
+}
