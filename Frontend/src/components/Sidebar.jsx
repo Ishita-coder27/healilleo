@@ -39,7 +39,7 @@ const sections = [
   },
 ];
 
-function Sidebar({ collapsed, toggleSidebar }) {
+function Sidebar({ collapsed, toggleSidebar, openBMI, openSleepTracker, openWaterTracker }) {
   return (
     <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
 
@@ -59,12 +59,26 @@ function Sidebar({ collapsed, toggleSidebar }) {
               <p className="section-title">{section.title}</p>
             )}
             <ul>
-              {section.items.map((item) => (
-                <li key={item.label} className="nav-item" title={collapsed ? item.label : ""}>
-                  <span className="nav-icon">{item.icon}</span>
-                  {!collapsed && <span className="nav-label">{item.label}</span>}
-                </li>
-              ))}
+              {section.items.map((item) => {
+                const isBMI = item.label === "BMI Calculator";
+                const isSleep = item.label === "Sleep Tracker";
+                const isWater = item.label === "Water Tracker";
+                return (
+                  <li 
+                    key={item.label} 
+                    className="nav-item" 
+                    title={collapsed ? item.label : ""} 
+                    onClick={() => {
+                      if (isBMI) openBMI?.();
+                      if (isSleep) openSleepTracker?.();
+                      if (isWater) openWaterTracker?.();
+                    }}
+                  >
+                    <span className="nav-icon">{item.icon}</span>
+                    {!collapsed && <span className="nav-label">{item.label}</span>}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ))}
