@@ -546,9 +546,51 @@ body {
   flex: 1; overflow-y: auto; padding: 28px 20px 20px;
   display: flex; flex-direction: column; gap: 18px; scroll-behavior: smooth;
 }
+.fc-messages {
+  padding: 28px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  scroll-behavior: smooth;
+  align-items: stretch;
+}
+
+.fc-input-wrap {
+  flex-shrink: 0;
+  padding: 12px 20px 20px;
+  background: #0d1117;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  align-items: center;  /* ← center the bar */
+}
+
+.fc-input-bar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 8px 8px 16px;
+  background: #161b22;
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 999px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  max-width: 760px;  /* ← matches message bubble column */
+}
+
+.fc-disclaimer {
+  font-size: 11px;
+  color: rgba(255,255,255,0.18);
+  text-align: center;
+  max-width: 760px;  /* ← keep disclaimer aligned too */
+  width: 100%;
+}
+
 @media (min-width: 768px) {
-  .fc-messages   { padding: 28px max(20px, calc(50% - 380px)); }
-  .fc-input-wrap { padding: 0 max(20px, calc(50% - 380px)) 20px; }
+  .fc-messages {
+    padding: 28px max(20px, calc(50% - 380px));
+  }
 }
 .fc-messages::-webkit-scrollbar { width: 4px; }
 .fc-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }

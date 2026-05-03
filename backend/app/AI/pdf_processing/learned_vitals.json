@@ -1,0 +1,198 @@
+{
+  "RDW CV": {
+    "aliases": [
+      "RDW CV"
+    ],
+    "unit": "%",
+    "category": "blood_cbc",
+    "type": "numeric",
+    "normal": [
+      11.6,
+      14.0
+    ]
+  },
+  "Platelet Count": {
+    "aliases": [
+      "Platelet Count"
+    ],
+    "unit": "/cmm",
+    "category": "blood_cbc",
+    "type": "numeric",
+    "normal": [
+      50000.0,
+      41000.0
+    ]
+  },
+  "Cholesterol": {
+    "aliases": [
+      "Cholesterol"
+    ],
+    "unit": "mg/dL",
+    "category": "diabetes_metabolic",
+    "type": "numeric"
+  },
+  "Triglyceride": {
+    "aliases": [
+      "Triglyceride"
+    ],
+    "unit": "mg/dL",
+    "category": "diabetes_metabolic",
+    "type": "numeric"
+  },
+  "Direct LDL": {
+    "aliases": [
+      "Direct LDL"
+    ],
+    "unit": "mg/dL",
+    "category": "diabetes_metabolic",
+    "type": "numeric"
+  },
+  "CHOL/HDL Ratio": {
+    "aliases": [
+      "CHOL/HDL Ratio"
+    ],
+    "unit": "?",
+    "category": "diabetes_metabolic",
+    "type": "numeric"
+  },
+  "LDL/HDL Ratio": {
+    "aliases": [
+      "LDL/HDL Ratio"
+    ],
+    "unit": "?",
+    "category": "diabetes_metabolic",
+    "type": "numeric"
+  },
+  "Fasting Blood Sugar": {
+    "aliases": [
+      "Fasting Blood Sugar"
+    ],
+    "unit": "mg/dL",
+    "category": "diabetes_metabolic",
+    "type": "numeric",
+    "normal": [
+      74.0,
+      106.0
+    ]
+  },
+  "T3 - Triiodothyronine": {
+    "aliases": [
+      "T3 - Triiodothyronine"
+    ],
+    "unit": "ng/mL",
+    "category": "thyroid",
+    "type": "numeric",
+    "normal": [
+      0.58,
+      1.59
+    ]
+  },
+  "T4 - Thyroxine": {
+    "aliases": [
+      "T4 - Thyroxine"
+    ],
+    "unit": "mg/mL",
+    "category": "thyroid",
+    "type": "numeric",
+    "normal": [
+      4.87,
+      11.72
+    ]
+  },
+  "TSH - Thyroid Stimulating Hormone": {
+    "aliases": [
+      "TSH - Thyroid Stimulating Hormone"
+    ],
+    "unit": "microIU/mL",
+    "category": "thyroid",
+    "type": "numeric",
+    "normal": [
+      0.35,
+      4.94
+    ]
+  },
+  "Conjugated Bilirubin": {
+    "aliases": [
+      "Conjugated Bilirubin"
+    ],
+    "unit": "mg/dL",
+    "category": "liver_hepatic",
+    "type": "numeric",
+    "normal": [
+      0.0,
+      0.3
+    ]
+  },
+  "Unconjugated Bilirubin": {
+    "aliases": [
+      "Unconjugated Bilirubin"
+    ],
+    "unit": "mg/dL",
+    "category": "liver_hepatic",
+    "type": "numeric",
+    "normal": [
+      0.0,
+      1.1
+    ]
+  },
+  "Total Erythrocyte Count (TRBC)": {
+    "aliases": [
+      "Total Erythrocyte Count (TRBC)"
+    ],
+    "unit": "millions/cu.mm",
+    "category": "blood_cbc",
+    "type": "numeric",
+    "normal": [
+      3.8,
+      4.8
+    ]
+  },
+  "TLC (Total Leucocyte Count)": {
+    "aliases": [
+      "TLC (Total Leucocyte Count)"
+    ],
+    "unit": "cells/cu.mm",
+    "category": "blood_cbc",
+    "type": "numeric",
+    "normal": [
+      4000.0,
+      11000.0
+    ]
+  },
+  "LDL to HDL Ratio": {
+    "aliases": [
+      "LDL to HDL Ratio"
+    ],
+    "unit": "?",
+    "category": "diabetes_metabolic",
+    "type": "numeric",
+    "normal": [
+      1.5,
+      3.2
+    ]
+  },
+  "SERUM PHOSPHORUS": {
+    "aliases": [
+      "SERUM PHOSPHORUS"
+    ],
+    "unit": "mg/dl",
+    "category": "electrolytes",
+    "type": "numeric",
+    "normal": [
+      2.5,
+      4.5
+    ]
+  },
+  "S.Calciium": {
+    "aliases": [
+      "S.Calciium"
+    ],
+    "unit": "mg/dl",
+    "category": "electrolytes",
+    "type": "numeric",
+    "normal": [
+      8.4,
+      10.2
+    ]
+  }
+}

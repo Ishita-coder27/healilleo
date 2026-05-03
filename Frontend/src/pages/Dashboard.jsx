@@ -6,30 +6,34 @@ import SleepTracker from "../components/SleepTracker";
 import WaterTracker from "../components/WaterTracker";
 import "./Dashboard.css";
 import BMICalculator from "../components/BMICalculator";
-
+import { useChatPipeline } from "../hooks/useChatPipeline"
+// import { useCallback } from "react";  // likely already there
+// import { useChatPipeline } from "../hooks/useChatPipeline";
+import { useContext } from "react";
+import { useAuth } from "../context/AuthContext";
 
 
 const API = "http://localhost:8000";
 
 /* ─── LLM call ─────────────────────────────────────────────── */
-async function callLLM(history) {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 1000,
-      system:
-        "You are a helpful AI health assistant for Heallio. Give clear, concise, friendly health advice. Always remind users to consult a doctor for serious concerns. Keep responses under 150 words unless truly needed.",
-      messages: history.map((m) => ({
-        role: m.from === "user" ? "user" : "assistant",
-        content: m.text,
-      })),
-    }),
-  });
-  const data = await res.json();
-  return data.content?.[0]?.text || "Sorry, I couldn't get a response.";
-}
+// async function callLLM(history) {
+//   const res = await fetch("https://api.anthropic.com/v1/messages", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       model: "claude-sonnet-4-20250514",
+//       max_tokens: 1000,
+//       system:
+//         "You are a helpful AI health assistant for Heallio. Give clear, concise, friendly health advice. Always remind users to consult a doctor for serious concerns. Keep responses under 150 words unless truly needed.",
+//       messages: history.map((m) => ({
+//         role: m.from === "user" ? "user" : "assistant",
+//         content: m.text,
+//       })),
+//     }),
+//   });
+//   const data = await res.json();
+//   return data.content?.[0]?.text || "Sorry, I couldn't get a response.";
+// }
 
 /* ═══════════════════════════════════════════════════════════
    HERO TYPING HOOK
@@ -110,24 +114,48 @@ function useHeroTyping() {
   return { displayed, initialDone, isCursorBlinking };
 }
 
-/* ═══════════════════════════════════════════════════════════
-   FULL-SCREEN CHAT VIEW
-   ═══════════════════════════════════════════════════════════ */
-function FullChat({ messages, loading, onSend, onBack, onClear }) {
-  const [input, setInput]           = useState("");
+function FullChat({
+  messages,
+  loading,
+  onSend,    // ← receives Dashboard's sendMessage
+  onBack,
+  onClear
+}) {
+  // No useChatPipeline here — delegation happens via onSend
+  const [input, setInput] = useState("");
   const [showScroll, setShowScroll] = useState(false);
-  const bottomRef                   = useRef(null);
-  const scrollRef                   = useRef(null);
-  const inputRef                    = useRef(null);
 
+  const bottomRef = useRef(null);
+  const scrollRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const send = async () => {
+    if (!input.trim() || loading) return;
+    const text = input;
+    setInput("");
+    await onSend(text);   // calls Dashboard's sendMessage → useChatPipeline
+    inputRef.current?.focus();
+  };
+
+  /* ─────────────────────────────────────────────
+     AUTO SCROLL
+  ───────────────────────────────────────────── */
   useEffect(() => {
-    if (!showScroll) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (!showScroll) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages, loading]);
 
+  /* ─────────────────────────────────────────────
+     SCROLL DETECTION
+  ───────────────────────────────────────────── */
   const handleScroll = () => {
     const el = scrollRef.current;
     if (!el) return;
-    setShowScroll(el.scrollHeight - el.scrollTop - el.clientHeight > 120);
+
+    setShowScroll(
+      el.scrollHeight - el.scrollTop - el.clientHeight > 120
+    );
   };
 
   const scrollToBottom = () => {
@@ -135,113 +163,182 @@ function FullChat({ messages, loading, onSend, onBack, onClear }) {
     setShowScroll(false);
   };
 
-  const send = () => {
-    if (!input.trim() || loading) return;
-    onSend(input);
-    setInput("");
-    inputRef.current?.focus();
-  };
+  const getTime = () =>
+    new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
 
+  /* ─────────────────────────────────────────────
+     SEND MESSAGE → BACKEND
+  ───────────────────────────────────────────── */
+  // const send = async () => {
+  //   if (!input.trim() || loading) return;
+
+  //   const userMessage = input;
+  //   setInput("");
+
+  //   // 1. Add user message
+  //   setMessages((prev) => [
+  //     ...prev,
+  //     { from: "user", text: userMessage, time: getTime() }
+  //   ]);
+
+  //   setLoading(true);
+
+  //   try {
+  //     const answer = await processQuery(
+  //       userMessage,
+  //       "cardiovascular"   // temporary bucket
+  //     );
+
+  //     console.log("API RESPONSE:", data);
+
+  //     // 2. SAFE fallback handling
+  //     // const data = await res.json();
+
+  //     setMessages((prev) => [
+  //       ...prev,
+  //       {
+  //         from: "assistant",
+  //         text: answer,
+  //         time: getTime()
+  //       }
+  //     ]);
+
+  //   } catch (err) {
+  //     console.error(err);
+
+  //     setMessages((prev) => [
+  //       ...prev,
+  //       {
+  //         from: "assistant",
+  //         text: "Something went wrong. Please try again.",
+  //         time: getTime()
+  //       }
+  //     ]);
+  //   } finally {
+  //     setLoading(false);
+  //     inputRef.current?.focus();
+  //   }
+  // };
+
+  /* ─────────────────────────────────────────────
+     UI
+  ───────────────────────────────────────────── */
   return (
     <div className="fullchat-overlay">
+
       <header className="fc-topbar">
-        <button className="fc-back-btn" onClick={onBack} title="Back">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5M12 5l-7 7 7 7"/>
-          </svg>
-          <span>Back</span>
+        <button className="fc-back-btn" onClick={onBack}>
+          ← Back
         </button>
+
         <div className="fc-title">
           <div className="fc-title-avatar">🩺</div>
           <div>
             <div className="fc-title-name">Health Assistant</div>
-            <div className="fc-title-sub">Powered by Claude AI · {messages.length} messages</div>
+            <div className="fc-title-sub">
+              AI Medical Assistant · {messages.length} messages
+            </div>
           </div>
         </div>
-        <button className="fc-clear-btn" onClick={onClear} title="Clear chat">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="3 6 5 6 21 6"/>
-            <path d="M19 6l-1 14H6L5 6"/>
-            <path d="M10 11v6M14 11v6"/>
-            <path d="M9 6V4h6v2"/>
-          </svg>
-          <span>Clear</span>
+
+        <button className="fc-clear-btn" onClick={onClear}>
+          Clear
         </button>
       </header>
 
-      <div className="fc-messages" ref={scrollRef} onScroll={handleScroll}>
+      <div
+        className="fc-messages"
+        ref={scrollRef}
+        onScroll={handleScroll}
+      >
         {messages.map((msg, i) => (
           <div key={i} className={`fc-msg-row ${msg.from}`}>
-            {msg.from === "assistant" && <div className="fc-avatar">🩺</div>}
+
+            {msg.from === "assistant" && (
+              <div className="fc-avatar">🩺</div>
+            )}
+
             <div className={`fc-bubble ${msg.from}`}>
               <div className="fc-bubble-text">{msg.text}</div>
-              <div className="fc-bubble-time">
-                {msg.time || new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-              </div>
+              <div className="fc-bubble-time">{msg.time}</div>
+
+              {msg.buckets?.length > 0 && (
+                <div className="fc-debug">
+                  Buckets: {msg.buckets.join(", ")}
+                </div>
+              )}
             </div>
-            {msg.from === "user" && <div className="fc-avatar fc-avatar-user">S</div>}
+
+            {msg.from === "user" && (
+              <div className="fc-avatar fc-avatar-user">S</div>
+            )}
           </div>
         ))}
+
         {loading && (
           <div className="fc-msg-row assistant">
             <div className="fc-avatar">🩺</div>
             <div className="fc-bubble assistant">
-              <div className="fc-typing"><span /><span /><span /></div>
+              <div className="fc-typing">
+                <span></span><span></span><span></span>
+              </div>
             </div>
           </div>
         )}
+
         <div ref={bottomRef} />
       </div>
 
       {showScroll && (
-        <button className="fc-scroll-btn" onClick={scrollToBottom} title="Scroll to latest">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 5v14M5 12l7 7 7-7"/>
-          </svg>
+        <button
+          className="fc-scroll-btn"
+          onClick={scrollToBottom}
+        >
+          ↓
         </button>
       )}
 
       <div className="fc-input-wrap">
         <div className="fc-input-bar">
-          <button className="fc-ib-btn" title="Attach">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-          </button>
+
           <input
             ref={inputRef}
             className="fc-ib-input"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && send()}
-            placeholder="Ask a health question…"
+            onKeyDown={(e) => e.key === "Enter" && send()}
+            placeholder="Ask a health question..."
             disabled={loading}
-            autoFocus
           />
-          <button className="fc-ib-btn" title="Voice">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="9" y="2" width="6" height="11" rx="3"/>
-              <path d="M5 10a7 7 0 0 0 14 0"/>
-              <line x1="12" y1="19" x2="12" y2="22"/>
-              <line x1="9" y1="22" x2="15" y2="22"/>
-            </svg>
+
+          <button
+            className="fc-ib-send"
+            onClick={send}
+            disabled={loading || !input.trim()}
+          >
+            {loading ? "..." : "Send"}
           </button>
-          <button className={`fc-ib-send ${input.trim() && !loading ? "active" : ""}`} onClick={send} disabled={loading || !input.trim()}>
-            {loading ? <span className="fc-spinner" /> : (
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l8 8-8 8V4z"/></svg>
-            )}
-          </button>
+
         </div>
-        <p className="fc-disclaimer">Heallio AI may make mistakes. Always consult a qualified healthcare professional.</p>
+
+        <p className="fc-disclaimer">
+          AI may be inaccurate. Consult a doctor for medical advice.
+        </p>
       </div>
     </div>
   );
 }
-
 /* ═══════════════════════════════════════════════════════════
    MAIN DASHBOARD
    ═══════════════════════════════════════════════════════════ */
 export default function Dashboard() {
+  const { user } = useAuth();
+  const userId = user?.id ?? 8;
+
+  // const { processQuery, clearContext } = useChatPipeline(userId);
   const [bmiOpen, setBmiOpen] = useState(false);  
   const [sleepTrackerOpen, setSleepTrackerOpen] = useState(false);
   const [waterTrackerOpen, setWaterTrackerOpen] = useState(false);
@@ -304,45 +401,59 @@ export default function Dashboard() {
     fetchReminders();
   }, []);
 
-  const sendMessage = useCallback(async (text) => {
-    const msgText = (text || input).trim();
-    if (!msgText || loading) return;
-    const userMsg = {
-      from: "user",
-      text: msgText,
+ // At the top of Dashboard(), get userId from your auth context
+// import { useAuth } from "../context/AuthContext"
+// const { user } = useAuth()
+// const userId = user?.id ?? 8   // fallback to 8 during dev
+
+const { processQuery, clearContext } = useChatPipeline(userId)
+
+const sendMessage = useCallback(async (text) => {
+  const msgText = (text || input).trim()
+  if (!msgText || loading) return
+
+  setMessages(prev => [...prev, {
+    from: "user",
+    text: msgText,
+    time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+  }])
+  setInput("")
+  setLoading(true)
+  setFullscreen(true)
+
+  try {
+    const { answer, buckets } = await processQuery(msgText)
+
+    setMessages(prev => [...prev, {
+      from: "assistant",
+      text: answer,
+      buckets,   // shown in fc-debug if you want
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    };
-    const updated = [...messages, userMsg];
-    setMessages(updated);
-    setInput("");
-    setLoading(true);
-    setFullscreen(true);
-    try {
-      const reply = await callLLM(updated);
-      setMessages((prev) => [...prev, {
-        from: "assistant",
-        text: reply,
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      }]);
-    } catch {
-      setMessages((prev) => [...prev, { from: "assistant", text: "Something went wrong. Please try again.", time: "" }]);
-    } finally {
-      setLoading(false);
-    }
-  }, [input, messages, loading]);
+    }])
+  } catch {
+    setMessages(prev => [...prev, {
+      from: "assistant",
+      text: "Something went wrong. Please try again.",
+      time: "",
+    }])
+  } finally {
+    setLoading(false)
+  }
+}, [input, loading, processQuery])
 
   const handleSuggestedQ = (q) => {
     setInput(q);
     setTimeout(() => sendMessage(q), 50);
   };
 
-  const clearChat = () => {
+  const clearChat = async () => {
+    await clearContext()   // clears backend session + frontend context
     setMessages([{
       from: "assistant",
       text: "Chat cleared. How can I help you?",
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    }]);
-  };
+    }])
+  }
 
   const handleUpload = async (e) => {
     const file = e.target.files[0];
@@ -534,7 +645,9 @@ export default function Dashboard() {
       {fullscreen && (
         <FullChat
           messages={messages}
+          setMessages={setMessages}
           loading={loading}
+          setLoading={setLoading}
           onSend={sendMessage}
           onBack={() => setFullscreen(false)}
           onClear={clearChat}

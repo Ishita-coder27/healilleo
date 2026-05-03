@@ -10,6 +10,8 @@ from app.schemas.medical_reports import MedicalReportRead
 from app.crud import medical_reports as crud_reports
 from app.core.auth import get_current_user
 
+from app.services.vital_pipeline import process_report
+
 UPLOAD_DIR = "uploads/reports"
 
 router = APIRouter(prefix="/medical-reports", tags=["Medical Reports"])
@@ -34,13 +36,18 @@ async def upload_medical_report(
         content = await file.read()
         f.write(content)
 
-    return crud_reports.create_medical_report(
+    report = crud_reports.create_medical_report(
         db=db,
         user_id=current_user.id,
         file_name=file.filename,
         file_path=file_path,
         file_type="pdf"
     )
+
+    # Run extraction after saving
+    process_report(db, report.id, file_path)
+
+    return report
 
 
 @router.get("/", response_model=list[MedicalReportRead])

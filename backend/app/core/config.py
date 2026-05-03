@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     # Google OAuth
     GOOGLE_CLIENT_ID: str = "your-google-client-id.apps.googleusercontent.com"
 
+    # Groq
+    GROQ_API_KEY: str   # 👈 ADD THIS
+
     class Config:
         env_file = ".env"
 

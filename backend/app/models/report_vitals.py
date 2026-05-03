@@ -1,4 +1,4 @@
-from sqlalchemy import (Column, Integer, Float, String, ForeignKey, DateTime)
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.db.base import Base
@@ -23,16 +23,19 @@ class ReportVital(Base):
         index=True,
     )
 
-    # Measured value
-    value = Column(Float, nullable=False)
+    # Extracted data
+    value = Column(String, nullable=True)  # stored as string (safe mode)
+    unit = Column(String, nullable=True)
+    reference_range = Column(String, nullable=True)
+    status = Column(String, nullable=True)
+    method = Column(String, nullable=True)
+    confidence = Column(Float, nullable=True)
 
-    # Optional overrides / metadata
-    unit_override = Column(String, nullable=True)
-    confidence = Column(String, nullable=True)      # lab / ocr / manual
-
-    measured_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
 
     # Relationships
     vital = relationship("Vital")
-    report = relationship("MedicalReport", backref="vitals")
+    report = relationship(
+        "MedicalReport",
+        back_populates="vitals"
+    )

@@ -2,6 +2,25 @@ from sqlalchemy.orm import Session
 from app.models.vitals import Vital
 from app.schemas.vitals import VitalCreate, VitalUpdate
 
+def get_or_create_vital(db: Session, name: str, category: str = None):
+    key = name.lower().replace(" ", "_")
+
+    vital = db.query(Vital).filter(Vital.key == key).first()
+    if vital:
+        return vital
+
+    new_vital = Vital(
+        key=key,
+        display_name=name,
+        category=category
+    )
+
+    db.add(new_vital)
+    db.commit()
+    db.refresh(new_vital)
+
+    return new_vital
+
 
 # -------- Create --------
 def create_vital(db: Session, vital_data: VitalCreate) -> Vital:
@@ -54,3 +73,4 @@ def delete_vital(db: Session, vital_id: int) -> bool:
     db.delete(vital)
     db.commit()
     return True
+
