@@ -25,24 +25,34 @@ Heallio is a full-stack health management platform that combines AI-driven medic
 <!-- Replace the placeholders below with your actual screenshots -->
 
 **Dashboard**
+<img width="746" height="845" alt="image" src="https://github.com/user-attachments/assets/7df7554e-871c-4c10-af3b-ece402911172" />
+<img width="1885" height="900" alt="image" src="https://github.com/user-attachments/assets/66b8ce22-dc99-4020-be71-3cdd0f38b374" />
 
-![Dashboard](docs/screenshots/dashboard.png)
+
+
 
 **Medical Reports & AI Analysis**
 
-![Medical Reports](docs/screenshots/medical-reports.png)
+<img width="1323" height="870" alt="image" src="https://github.com/user-attachments/assets/7d465868-dbe6-4b2c-b097-e5ff04d3f850" />
+
 
 **Health Analytics**
 
-![Analytics](docs/screenshots/analytics.png)
+<img width="921" height="811" alt="image" src="https://github.com/user-attachments/assets/94e6162b-614d-4c47-8328-902f59b54ce1" />
+<img width="1194" height="848" alt="image" src="https://github.com/user-attachments/assets/9f100e4a-c2b9-4cb0-9db3-64af20056a69" />
+<img width="1187" height="566" alt="image" src="https://github.com/user-attachments/assets/729fd39d-131a-4853-9994-c277a8b0b5e3" />
+
+
+
 
 **AI Health Assistant**
 
-![AI Assistant](docs/screenshots/ai-assistant.png)
+<img width="1422" height="890" alt="image" src="https://github.com/user-attachments/assets/6c847a9d-7552-4bd3-b1a2-87e438ad8736" />
+
 
 **Appointments**
+<img width="1170" height="469" alt="image" src="https://github.com/user-attachments/assets/9a27a6b7-da7e-4863-a894-b2ca7f2dea43" />
 
-![Appointments](docs/screenshots/appointments.png)
 
 ---
 
