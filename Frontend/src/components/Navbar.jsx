@@ -1,45 +1,42 @@
 import React, { useState, useRef } from "react";
 import "./Navbar.css";
+import { useTheme } from "../context/ThemeContext";
 
-const API = "http://localhost:8000";
+const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const NAV_ITEMS = [
   {
-    label: "Update Reports",
-    icon: "📁",
+    label: "Reports",
     dropdown: [
-      { icon: "⬆️", label: "Upload New Report",  desc: "Add a new lab or medical report",   action: "upload-report"   },
-      { icon: "🗑️", label: "Delete a Report",    desc: "Remove an existing report",         action: "delete-report"   },
-      { icon: "📋", label: "View All Reports",   desc: "Browse your full report history",   action: "view-reports"    },
+      { label: "Upload Report",      desc: "Add a new lab or medical report",   action: "upload-report"   },
+      { label: "Delete Report",      desc: "Remove an existing report",         action: "delete-report"   },
+      { label: "View All Reports",   desc: "Browse your full report history",   action: "view-reports"    },
     ],
   },
   {
     label: "Appointments",
-    icon: "🗓️",
     dropdown: [
-      { icon: "➕", label: "New Appointment",       desc: "Schedule a new doctor visit",       action: "new-appointment"    },
-      { icon: "❌", label: "Cancel Appointment",    desc: "Remove an upcoming appointment",    action: "cancel-appointment" },
-      { icon: "📅", label: "View All Appointments", desc: "See your full appointment history", action: "view-appointments"  },
+      { label: "New Appointment",       desc: "Schedule a new doctor visit",       action: "new-appointment"    },
+      { label: "Cancel Appointment",    desc: "Remove an upcoming appointment",    action: "cancel-appointment" },
+      { label: "View Appointments",     desc: "See your full appointment history", action: "view-appointments"  },
     ],
   },
   {
     label: "Medications",
-    icon: "💊",
     dropdown: [
-      { icon: "➕", label: "Add Medication",        desc: "Log a new medication & schedule",   action: "add-medication"    },
-      { icon: "🗑️", label: "Remove Medication",    desc: "Delete a medication from your list", action: "remove-medication" },
-      { icon: "📋", label: "View All Medications",  desc: "Browse your full medication list",  action: "view-medications"  },
+      { label: "Add Medication",        desc: "Log a new medication & schedule",   action: "add-medication"    },
+      { label: "Remove Medication",     desc: "Delete a medication from your list", action: "remove-medication" },
+      { label: "View Medications",      desc: "Browse your full medication list",  action: "view-medications"  },
     ],
   },
-  { label: "BMI Check", icon: "📊", action: "open-bmi" },
-  { label: "Diet Plan", icon: "🥗", href: "#" },
-  { label: "Exercise",  icon: "🏋️", href: "#" },
+  { label: "BMI Check", action: "open-bmi" },
 ];
 
 const EMPTY_APPT = { doctor_name: "", clinic_name: "", appointment_time: "", notes: "" };
 const EMPTY_MED  = { medication_name: "", dosage: "", frequency: "", start_date: "", end_date: "", notes: "", next_reminder_time: "" };
 
 export default function Navbar({ openBMI }) {
+  const { dark, toggle: toggleTheme } = useTheme();
   const [menuOpen,       setMenuOpen]       = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState(null);
 
@@ -228,8 +225,10 @@ export default function Navbar({ openBMI }) {
     <>
       <nav className="hn-root">
         <div className="hn-inner">
-          <a className="hn-logo" href="#">
-            <span className="hn-logo-icon">🩺</span>
+          <a className="hn-logo" href="/dashboard">
+            <svg className="hn-logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="22" height="22">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
             <span className="hn-logo-text">Heallio</span>
           </a>
 
@@ -246,7 +245,6 @@ export default function Navbar({ openBMI }) {
     }
   }}
 >
-                  <span className="hn-link-icon">{item.icon}</span>
                   {item.label}
                   {item.dropdown && (
                     <svg className="hn-chevron" viewBox="0 0 10 6" fill="none">
@@ -258,7 +256,6 @@ export default function Navbar({ openBMI }) {
                   <div className="hn-dropdown">
                     {item.dropdown.map((d) => (
                       <button className="hn-dd-item" key={d.label} onClick={() => d.action && handleAction(d.action)}>
-                        <span className="hn-dd-icon">{d.icon}</span>
                         <div>
                           <div className="hn-dd-label">{d.label}</div>
                           <div className="hn-dd-desc">{d.desc}</div>
@@ -272,6 +269,17 @@ export default function Navbar({ openBMI }) {
           </ul>
 
           <div className="hn-right">
+            <button
+              className="hn-theme-toggle"
+              onClick={toggleTheme}
+              title={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              aria-label="Toggle dark mode"
+            >
+              {dark
+                ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>
+              }
+            </button>
             <div className="hn-avatar">S</div>
           </div>
 

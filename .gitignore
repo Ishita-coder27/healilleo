@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+Frontend/node_modules/
+
+# Build output
+Frontend/dist/
+Frontend/.vite/
+dist/
+
+# Python
+backend/venv/
+backend/__pycache__/
+backend/app/__pycache__/
+backend/app/**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environment files
+.env
+backend/.env
+Frontend/.env
+!Frontend/.env.example
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Uploads (user files, not source)
+backend/uploads/
+
+# Test / coverage
+.coverage
+htmlcov/
+.pytest_cache/

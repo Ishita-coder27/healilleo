@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
-import { ContextProvider } from "./context/ContextProvider"
+import { ThemeProvider } from "./context/ThemeContext";
 
 const GOOGLE_CLIENT_ID = "466449394809-p79er9aqamumfvpsc7n1684s6jicndlh.apps.googleusercontent.com";
 
@@ -12,12 +12,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>
   </GoogleOAuthProvider>
 );
-
-<ContextProvider>
-  <App />
-</ContextProvider>

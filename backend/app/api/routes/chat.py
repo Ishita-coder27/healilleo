@@ -21,18 +21,28 @@ class ClearRequest(BaseModel):
 
 @router.post("/chat")
 def chat(req: ChatRequest):
-    result = process_user_query(
-        req.user_id,
-        req.message,
-        context_summary=req.context_summary
-    )
-    return {
-        "reply": result["answer"],
-        "vitals": result["vitals"],
-        "buckets": result["buckets"],
-        "summary": result["summary"],            # ← frontend persists this
-        "cached_vitals_used": result["cached_vitals_used"],  # ← for debugging
-    }
+    try:
+        result = process_user_query(
+            req.user_id,
+            req.message,
+            context_summary=req.context_summary
+        )
+        return {
+            "reply": result["answer"],
+            "vitals": result.get("vitals", {}),
+            "buckets": result.get("buckets", []),
+            "summary": result.get("summary", {}),
+            "cached_vitals_used": result.get("cached_vitals_used", []),
+        }
+    except Exception as e:
+        print(f"[CHAT ERROR] {e}")
+        return {
+            "reply": "I'm currently unavailable. Please check that the AI service (Groq API key) is configured correctly.",
+            "vitals": {},
+            "buckets": [],
+            "summary": {},
+            "cached_vitals_used": [],
+        }
 
 
 @router.post("/chat/clear")

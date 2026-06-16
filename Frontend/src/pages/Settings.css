@@ -1,0 +1,91 @@
+.sett-page { display: flex; flex-direction: column; gap: var(--sp-lg); max-width: 720px; }
+
+.sett-header { margin-bottom: 4px; }
+.sett-title { font-family: var(--font-head); font-size: 26px; font-weight: 700; color: var(--text); margin: 0; }
+.sett-sub   { color: var(--text-2); font-size: 14px; margin: 4px 0 0; }
+
+.sett-notice {
+  padding: 12px 16px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500;
+}
+.sett-notice.ok  { background: var(--green-lt); color: #15803d; border: 1px solid rgba(34,197,94,.3); }
+.sett-notice.err { background: var(--red-lt);   color: #dc2626; border: 1px solid rgba(239,68,68,.3); }
+
+/* Card */
+.sett-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-xs);
+  display: flex; flex-direction: column; gap: 0;
+}
+
+.sett-section-title {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  color: var(--text-2); text-transform: uppercase; letter-spacing: 0.5px;
+  margin: 0 0 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+}
+
+/* Rows */
+.sett-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.sett-row:last-of-type { border-bottom: none; padding-bottom: 0; }
+.sett-row:first-of-type.sett-row:last-of-type { padding: 0; }
+
+.sett-row-info { flex: 1; min-width: 0; }
+.sett-row-label { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.sett-row-desc  { font-size: 13px; color: var(--text-2); }
+
+/* Toggle */
+.sett-toggle {
+  width: 44px; height: 24px; border-radius: 12px;
+  background: var(--border); border: none; cursor: pointer;
+  position: relative; transition: background 0.2s; flex-shrink: 0; padding: 0;
+}
+.sett-toggle.on { background: var(--teal); }
+.sett-toggle-thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.sett-toggle.on .sett-toggle-thumb { left: 23px; }
+
+/* Segmented */
+.sett-segmented { display: flex; gap: 4px; }
+.sett-seg-btn {
+  padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px;
+  background: none; font-size: 13px; font-weight: 600; color: var(--text-2);
+  cursor: pointer; font-family: var(--font-body); transition: all 0.15s;
+}
+.sett-seg-btn.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+/* Password form */
+.sett-pw-form { display: flex; flex-direction: column; gap: 14px; }
+
+.sett-field { display: flex; flex-direction: column; gap: 5px; }
+.sett-field label { font-size: 12px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.4px; }
+.sett-field input {
+  padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 14px; font-family: var(--font-body); background: var(--bg);
+  color: var(--text); outline: none; transition: border-color 0.2s;
+}
+.sett-field input:focus { border-color: var(--teal); }
+
+.sett-save-btn {
+  background: var(--teal); color: #fff; border: none; border-radius: var(--radius-sm);
+  padding: 10px 24px; font-size: 14px; font-weight: 600; cursor: pointer;
+  font-family: var(--font-body); align-self: flex-start; transition: background 0.2s;
+}
+.sett-save-btn:hover:not(:disabled) { background: var(--teal-hover); }
+.sett-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Danger zone */
+.sett-danger-card { border-color: rgba(239, 68, 68, 0.3); }
+.sett-danger-label { color: #dc2626 !important; }
+
+.sett-delete-btn {
+  background: none; border: 1px solid rgba(239,68,68,.5); border-radius: var(--radius-sm);
+  padding: 9px 18px; font-size: 13px; font-weight: 600; color: #dc2626;
+  cursor: pointer; font-family: var(--font-body); white-space: nowrap;
+  transition: background 0.15s;
+}
+.sett-delete-btn:hover { background: var(--red-lt); }

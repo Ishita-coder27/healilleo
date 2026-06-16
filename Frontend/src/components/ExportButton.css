@@ -1,0 +1,28 @@
+.export-wrap { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.export-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--teal); color: #fff; border: none;
+  border-radius: var(--radius-sm); padding: 10px 18px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  font-family: var(--font-body); transition: background 0.2s;
+  white-space: nowrap;
+}
+.export-btn:hover:not(:disabled) { background: var(--teal-hover); }
+.export-btn:disabled { opacity: 0.65; cursor: not-allowed; }
+
+.export-btn.outline {
+  background: none; border: 1px solid var(--teal); color: var(--teal);
+}
+.export-btn.outline:hover:not(:disabled) { background: var(--cyan-lt); }
+
+.export-spin {
+  display: inline-block; width: 13px; height: 13px;
+  border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+  border-radius: 50%; animation: expSpin 0.7s linear infinite;
+}
+@keyframes expSpin { to { transform: rotate(360deg); } }
+
+.export-msg { font-size: 13px; font-weight: 500; }
+.export-msg.ok  { color: #15803d; }
+.export-msg.err { color: #dc2626; }

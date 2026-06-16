@@ -71,6 +71,36 @@
   --font-body: 'Inter', sans-serif;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   DARK MODE TOKENS
+   ═══════════════════════════════════════════════════════════ */
+[data-theme="dark"] {
+  --bg:        #0F172A;
+  --bg-2:      #0A1628;
+  --surface:   #1E293B;
+  --surface-2: #162032;
+  --text:      #E2E8F0;
+  --text-2:    #94A3B8;
+  --text-3:    #64748B;
+  --border:    #2D3748;
+  --border-2:  #374151;
+  --navy:      #0A1628;
+  --shadow-xs: 0 1px 4px rgba(0,0,0,0.3);
+  --shadow-sm: 0 8px 30px rgba(0,0,0,0.4);
+  --shadow-md: 0 12px 40px rgba(0,0,0,0.5);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.6);
+  --cyan-lt:   rgba(6,182,212,0.12);
+  --teal-lt:   rgba(14,165,164,0.12);
+  --violet-lt: rgba(139,92,246,0.12);
+  --green-lt:  rgba(34,197,94,0.12);
+  --amber-lt:  rgba(245,158,11,0.12);
+  --red-lt:    rgba(239,68,68,0.12);
+}
+
+[data-theme="dark"] body {
+  background: linear-gradient(160deg, var(--bg) 0%, var(--bg-2) 100%);
+}
+
 /* ─── Reset ───────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -413,6 +443,21 @@ body {
 }
 .bento-tracker-pct { font-size: 13px; font-weight: 600; color: var(--text-2); }
 
+/* ── Health Score card ── */
+.bento-score {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: var(--sp-lg);
+}
+.bento-score-label { font-size: 11px; font-weight: 700; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.5px; }
+.bento-score-sub   { font-size: 12px; font-weight: 600; color: var(--text-2); margin-top: 2px; }
+
+/* ── Export card ── */
+.bento-export {
+  display: flex; flex-direction: column; justify-content: center; gap: 10px;
+  padding: var(--sp-lg) var(--sp-xl);
+}
+.bento-export-desc { font-size: 12px; color: var(--text-2); line-height: 1.4; }
+
 /* ── Carousel card ── */
 .bento-carousel {
   grid-column: 1 / 4;
@@ -478,8 +523,10 @@ body {
   caret-color: var(--cyan);
 }
 .fib-input::placeholder { color: rgba(255,255,255,0.30); }
-.fib-mic { background: transparent; color: rgba(255,255,255,0.36); border: none; }
+.fib-mic { background: transparent; color: rgba(255,255,255,0.36); border: none; transition: background 0.2s, color 0.2s, transform 0.15s; }
 .fib-mic:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); transform: scale(1.08); }
+.fib-mic-active { color: #ef4444 !important; background: rgba(239,68,68,0.15) !important; animation: micPulse 1s ease-in-out infinite; }
+@keyframes micPulse { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.4)} 50%{box-shadow:0 0 0 6px rgba(239,68,68,0)} }
 .fib-send-btn {
   width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;

@@ -5,6 +5,8 @@ from app.api.routes import users, medical_reports, auth
 from app.api.routes import appointments, medications
 from app.api.routes import chat
 from app.api.routes import bucket
+from app.api.routes import export
+from app.api.routes import report_vitals
 from contextlib import asynccontextmanager
 from app.scheduler import start_scheduler
 from app.core.bucket_store import initialize_vitals
@@ -45,6 +47,8 @@ app.include_router(appointments.router)
 app.include_router(medications.router)
 app.include_router(chat.router)
 app.include_router(bucket.router)
+app.include_router(export.router)
+app.include_router(report_vitals.router)
 
 @app.get("/health-check")
 def health_check():

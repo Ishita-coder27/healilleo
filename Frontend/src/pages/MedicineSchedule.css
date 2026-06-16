@@ -1,0 +1,103 @@
+.med-page { display: flex; flex-direction: column; gap: var(--sp-xl); }
+
+.med-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.med-title { font-family: var(--font-head); font-size: 26px; font-weight: 700; color: var(--text); margin: 0; }
+.med-sub   { color: var(--text-2); font-size: 14px; margin: 4px 0 0; }
+
+.med-add-btn {
+  background: var(--teal); color: #fff; border: none;
+  border-radius: var(--radius-sm); padding: 10px 20px;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  font-family: var(--font-body); transition: background 0.2s;
+}
+.med-add-btn:hover { background: var(--teal-hover); }
+
+.med-notice {
+  padding: 12px 16px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500;
+}
+.med-notice.ok  { background: var(--green-lt); color: #15803d; border: 1px solid rgba(34,197,94,.3); }
+.med-notice.err { background: var(--red-lt);   color: #dc2626; border: 1px solid rgba(239,68,68,.3); }
+
+/* Form card */
+.med-form-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 24px 28px; box-shadow: var(--shadow-sm);
+}
+.med-form-title { font-family: var(--font-head); font-size: 16px; font-weight: 600; margin: 0 0 20px; color: var(--text); }
+.med-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.med-field { display: flex; flex-direction: column; gap: 6px; }
+.med-field label { font-size: 13px; font-weight: 600; color: var(--text-2); }
+.med-field label span { color: var(--red); }
+.med-field input, .med-field textarea {
+  padding: 10px 12px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 14px;
+  font-family: var(--font-body); background: var(--bg);
+  color: var(--text); outline: none; transition: border-color 0.2s;
+  resize: none;
+}
+.med-field input:focus, .med-field textarea:focus { border-color: var(--teal); }
+.med-field-full { grid-column: 1 / -1; }
+
+.med-form-actions { display: flex; gap: 10px; margin-top: 20px; }
+.med-btn-save {
+  background: var(--teal); color: #fff; border: none;
+  border-radius: var(--radius-sm); padding: 10px 24px;
+  font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--font-body);
+  transition: background 0.2s;
+}
+.med-btn-save:hover:not(:disabled) { background: var(--teal-hover); }
+.med-btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+.med-btn-cancel {
+  background: none; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: pointer;
+  color: var(--text-2); font-family: var(--font-body); transition: border-color 0.15s, color 0.15s;
+}
+.med-btn-cancel:hover { border-color: var(--red); color: var(--red); }
+
+/* Empty */
+.med-empty {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 80px 20px; color: var(--text-3); text-align: center;
+}
+.med-empty p { font-size: 16px; font-weight: 600; color: var(--text-2); margin: 0; }
+.med-empty span { font-size: 13px; }
+
+/* Section */
+.med-section-title { font-family: var(--font-head); font-size: 14px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 12px; }
+
+/* Cards grid */
+.med-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.med-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 18px;
+  box-shadow: var(--shadow-xs); display: flex; flex-direction: column; gap: 10px;
+}
+.med-card-hl { border-color: var(--teal); background: linear-gradient(135deg, var(--surface), var(--cyan-lt)); }
+
+.med-card-top { display: flex; align-items: center; gap: 10px; }
+.med-card-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--cyan-lt); color: var(--teal);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.med-card-info { flex: 1; min-width: 0; }
+.med-card-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.med-card-freq { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+
+.med-remove-btn {
+  background: none; border: 1px solid var(--border); border-radius: 6px;
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--text-2); transition: background 0.15s, color 0.15s; padding: 0;
+}
+.med-remove-btn:hover { background: var(--red-lt); color: #dc2626; border-color: rgba(239,68,68,.3); }
+
+.med-card-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.med-card-meta span { font-size: 12px; color: var(--text-2); }
+.med-due { font-size: 12px; font-weight: 600; color: var(--text-2); }
+.med-due-hl { color: var(--teal); }
+
+.med-card-notes { font-size: 12px; color: var(--text-2); margin: 0; padding-top: 8px; border-top: 1px solid var(--border); }
+
+@media (max-width: 600px) {
+  .med-form-grid { grid-template-columns: 1fr; }
+}

@@ -1,19 +1,44 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
+import { useVoiceInput } from "../hooks/useVoiceInput";
 import SuggestedCarousel from "../components/SuggestedCarousel";
 import SleepTracker from "../components/SleepTracker";
 import WaterTracker from "../components/WaterTracker";
 import "./Dashboard.css";
 import BMICalculator from "../components/BMICalculator";
-import { useChatPipeline } from "../hooks/useChatPipeline"
-// import { useCallback } from "react";  // likely already there
-// import { useChatPipeline } from "../hooks/useChatPipeline";
-import { useContext } from "react";
 import { useAuth } from "../context/AuthContext";
+import ExportButton from "../components/ExportButton";
 
+const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-const API = "http://localhost:8000";
+function calcHealthScore(vitals) {
+  let score = 100;
+  for (const v of vitals) {
+    const key = (v.key || "").toLowerCase();
+    const val = parseFloat(v.value);
+    if (isNaN(val)) continue;
+    if (key.includes("systolic") || key === "blood_pressure_systolic") {
+      if (val > 140) score -= 15; else if (val < 90) score -= 10;
+    }
+    if (key.includes("diastolic") || key === "blood_pressure_diastolic") {
+      if (val > 90) score -= 10;
+    }
+    if (key.includes("heart_rate") || key === "heart_rate") {
+      if (val > 100 || val < 50) score -= 10;
+    }
+    if (key.includes("glucose") || key.includes("blood_sugar")) {
+      if (val > 126 || val > 200) score -= 15;
+    }
+    if (key.includes("bmi")) {
+      if (val > 30 || val < 18.5) score -= 10;
+    }
+    if (key.includes("cholesterol")) {
+      if (val > 200) score -= 10;
+    }
+  }
+  return Math.max(0, Math.min(100, score));
+}
 
 /* ─── LLM call ─────────────────────────────────────────────── */
 // async function callLLM(history) {
@@ -235,7 +260,9 @@ function FullChat({
         </button>
 
         <div className="fc-title">
-          <div className="fc-title-avatar">🩺</div>
+          <div className="fc-title-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
           <div>
             <div className="fc-title-name">Health Assistant</div>
             <div className="fc-title-sub">
@@ -258,7 +285,9 @@ function FullChat({
           <div key={i} className={`fc-msg-row ${msg.from}`}>
 
             {msg.from === "assistant" && (
-              <div className="fc-avatar">🩺</div>
+              <div className="fc-avatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="16" height="16"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              </div>
             )}
 
             <div className={`fc-bubble ${msg.from}`}>
@@ -280,7 +309,9 @@ function FullChat({
 
         {loading && (
           <div className="fc-msg-row assistant">
-            <div className="fc-avatar">🩺</div>
+            <div className="fc-avatar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="16" height="16"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
             <div className="fc-bubble assistant">
               <div className="fc-typing">
                 <span></span><span></span><span></span>
@@ -346,12 +377,14 @@ export default function Dashboard() {
   const [fullscreen, setFullscreen] = useState(false);
   const [messages,   setMessages]   = useState([{
     from: "assistant",
-    text: "Hi! I'm your AI Health Assistant. Ask me anything about your health 🩺",
+    text: "Hi! I'm your AI Health Assistant. Ask me anything about your health.",
     time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
   }]);
   const [loading,  setLoading]  = useState(false);
   const [input,    setInput]    = useState("");
   const [focused,  setFocused]  = useState(false);
+
+  const [healthScore, setHealthScore] = useState(null);
 
   // Upload state
   const [uploading, setUploading] = useState(false);
@@ -369,6 +402,10 @@ export default function Dashboard() {
 
   const inputRef     = useRef(null);
   const fileInputRef = useRef(null);
+
+  const { listening, toggle: toggleVoice } = useVoiceInput((transcript) => {
+    setInput(transcript);
+  });
 
   // Typing animation
   const { displayed: typedHeading, initialDone: headingDone, isCursorBlinking } = useHeroTyping();
@@ -401,59 +438,78 @@ export default function Dashboard() {
     fetchReminders();
   }, []);
 
- // At the top of Dashboard(), get userId from your auth context
-// import { useAuth } from "../context/AuthContext"
-// const { user } = useAuth()
-// const userId = user?.id ?? 8   // fallback to 8 during dev
-
-const { processQuery, clearContext } = useChatPipeline(userId)
+  // Fetch extracted vitals for health score
+  useEffect(() => {
+    const token = localStorage.getItem("heallio_token");
+    if (!token) return;
+    fetch(`${API}/report-vitals/my-extractions?limit=5`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((r) => r.ok ? r.json() : [])
+      .then((data) => {
+        if (!Array.isArray(data) || !data.length) return;
+        // Flatten vitals_json from all extractions
+        const allVitals = [];
+        for (const ext of data) {
+          const vj = ext.vitals_json || {};
+          for (const [name, raw] of Object.entries(vj)) {
+            const val = typeof raw === "string" ? parseFloat(raw.split(" ")[0]) : parseFloat(raw);
+            if (!isNaN(val)) allVitals.push({ key: name.toLowerCase().replace(/\s+/g, "_"), value: val });
+          }
+        }
+        if (allVitals.length) setHealthScore(calcHealthScore(allVitals));
+      })
+      .catch(() => {});
+  }, []);
 
 const sendMessage = useCallback(async (text) => {
-  const msgText = (text || input).trim()
-  if (!msgText || loading) return
+  const msgText = (text || input).trim();
+  if (!msgText || loading) return;
 
   setMessages(prev => [...prev, {
     from: "user",
     text: msgText,
     time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-  }])
-  setInput("")
-  setLoading(true)
-  setFullscreen(true)
+  }]);
+  setInput("");
+  setLoading(true);
+  setFullscreen(true);
 
   try {
-    const { answer, buckets } = await processQuery(msgText)
-
+    const token = localStorage.getItem("heallio_token");
+    const r = await fetch(`${API}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ user_id: userId, message: msgText }),
+    });
+    const data = await r.json();
     setMessages(prev => [...prev, {
       from: "assistant",
-      text: answer,
-      buckets,   // shown in fc-debug if you want
+      text: data.reply || "Sorry, I could not get a response.",
+      buckets: data.buckets,
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    }])
+    }]);
   } catch {
     setMessages(prev => [...prev, {
       from: "assistant",
       text: "Something went wrong. Please try again.",
       time: "",
-    }])
+    }]);
   } finally {
-    setLoading(false)
+    setLoading(false);
   }
-}, [input, loading, processQuery])
+}, [input, loading, userId]);
 
   const handleSuggestedQ = (q) => {
     setInput(q);
     setTimeout(() => sendMessage(q), 50);
   };
 
-  const clearChat = async () => {
-    await clearContext()   // clears backend session + frontend context
+  const clearChat = () => {
     setMessages([{
       from: "assistant",
       text: "Chat cleared. How can I help you?",
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    }])
-  }
+    }]);
+  };
 
   const handleUpload = async (e) => {
     const file = e.target.files[0];
@@ -527,9 +583,9 @@ const sendMessage = useCallback(async (text) => {
             </p>
 
             <div className={`hero-pills ${headingDone ? "hero-sub-visible" : ""}`}>
-              <span className="hero-pill">🔒 Private & Secure</span>
-              <span className="hero-pill">⚡ Instant Answers</span>
-              <span className="hero-pill">🩺 Medically Informed</span>
+              <span className="hero-pill">Private &amp; Secure</span>
+              <span className="hero-pill">Instant Answers</span>
+              <span className="hero-pill">Medically Informed</span>
             </div>
           </section>
 
@@ -559,7 +615,9 @@ const sendMessage = useCallback(async (text) => {
 
             {/* Appointment */}
             <div className="bento-card bento-appt">
-              <div className="bento-card-icon">🗓️</div>
+              <div className="bento-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="20" height="20"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
               <div className="bento-card-label">Next Appointment</div>
               {nextAppt ? (
                 <>
@@ -580,7 +638,9 @@ const sendMessage = useCallback(async (text) => {
 
             {/* Medication */}
             <div className="bento-card bento-med">
-              <div className="bento-card-icon">💊</div>
+              <div className="bento-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="20" height="20"><path d="M10.5 6.5l7 7m-3.5-8.5l4 4a5 5 0 01-7 7l-4-4a5 5 0 017-7z"/></svg>
+              </div>
               <div className="bento-card-label">Medication Due</div>
               {nextMed ? (
                 <>
@@ -602,7 +662,9 @@ const sendMessage = useCallback(async (text) => {
             {/* Water Tracker */}
             <div className="bento-card bento-water">
               <div className="bento-tracker-header">
-                <span className="bento-card-icon">💧</span>
+                <span className="bento-card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18"><path d="M12 2C6 10 4 14 4 17a8 8 0 0016 0c0-3-2-7-8-15z"/></svg>
+                </span>
                 <span className="bento-card-label">Water Intake</span>
               </div>
               <div className="bento-tracker-value">{waterGlasses}<span className="bento-tracker-unit">/{waterGoal} glasses</span></div>
@@ -619,7 +681,9 @@ const sendMessage = useCallback(async (text) => {
             {/* Sleep Tracker */}
             <div className="bento-card bento-sleep">
               <div className="bento-tracker-header">
-                <span className="bento-card-icon">😴</span>
+                <span className="bento-card-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                </span>
                 <span className="bento-card-label">Sleep</span>
               </div>
               <div className="bento-tracker-value">{sleepHours}<span className="bento-tracker-unit">/{sleepGoal} hrs</span></div>
@@ -631,6 +695,24 @@ const sendMessage = useCallback(async (text) => {
                 <span className="bento-tracker-pct">{sleepPct}%</span>
                 <button className="bento-tracker-btn bento-tracker-btn-add" onClick={() => setSleepHours(Math.min(sleepGoal, +(sleepHours + 0.5).toFixed(1)))}>+</button>
               </div>
+            </div>
+
+            {/* Health Score card */}
+            {healthScore !== null && (
+              <div className="bento-card bento-score">
+                <div className="bento-score-label">Health Score</div>
+                <HealthScoreRing score={healthScore} />
+                <div className="bento-score-sub">
+                  {healthScore >= 80 ? "Excellent" : healthScore >= 60 ? "Good" : "Needs Attention"}
+                </div>
+              </div>
+            )}
+
+            {/* Export card */}
+            <div className="bento-card bento-export">
+              <div className="bento-card-label">Health Report</div>
+              <div className="bento-export-desc">Download your vitals and medications as a PDF</div>
+              <ExportButton />
             </div>
 
             {/* Carousel card */}
@@ -672,7 +754,11 @@ const sendMessage = useCallback(async (text) => {
               onBlur={() => setFocused(false)}
               placeholder="Ask anything about your health…"
             />
-            <button className="fib-icon-btn fib-mic" title="Voice input">
+            <button
+              className={`fib-icon-btn fib-mic ${listening ? "fib-mic-active" : ""}`}
+              title={listening ? "Stop listening" : "Voice input"}
+              onClick={toggleVoice}
+            >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="9" y="2" width="6" height="11" rx="3"/>
                 <path d="M5 10a7 7 0 0 0 14 0"/>
@@ -691,5 +777,23 @@ const sendMessage = useCallback(async (text) => {
       <WaterTracker open={waterTrackerOpen} onClose={() => setWaterTrackerOpen(false)} onAskLLM={(q) => { setWaterTrackerOpen(false); handleSuggestedQ(q); }}/>
       <BMICalculator open={bmiOpen} onClose={()=>setBmiOpen(false)} />
     </div>
+  );
+}
+
+function HealthScoreRing({ score }) {
+  const r = 36, cx = 44, cy = 44;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (score / 100) * circ;
+  const color = score >= 80 ? "#10B981" : score >= 60 ? "#F59E0B" : "#EF4444";
+  return (
+    <svg width="88" height="88" viewBox="0 0 88 88" style={{ display: "block", margin: "8px auto 4px" }}>
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--border)" strokeWidth="8" />
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth="8"
+        strokeDasharray={circ} strokeDashoffset={offset}
+        strokeLinecap="round" transform={`rotate(-90 ${cx} ${cy})`}
+        style={{ transition: "stroke-dashoffset 0.8s ease" }}
+      />
+      <text x={cx} y={cy + 6} textAnchor="middle" fontSize="18" fontWeight="700" fill="var(--text)">{score}</text>
+    </svg>
   );
 }
