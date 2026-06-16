@@ -109,7 +109,6 @@ class VitalExtractionDetailResponse(VitalExtractionListItem):
 class AnalyzeRequest(BaseModel):
     """For POST /api/reports/analyze"""
     sample_name: Optional[str] = None
-    pdf_file: Optional[UploadFile] = File(None)
 
 
 class VitalDetailItem(BaseModel):
