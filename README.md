@@ -15,7 +15,7 @@ Heallio is a full-stack health management platform that combines AI-driven medic
 
 > **Demo credentials:** `demo@heallio.in` / `Demo@1234`
 
-<!-- Add your live URL here once deployed -->
+https://healilleo.vercel.app/
 <!-- [View Live App](https://heallio.vercel.app) -->
 
 ---
