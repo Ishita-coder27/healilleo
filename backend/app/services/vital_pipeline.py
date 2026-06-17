@@ -1,11 +1,20 @@
 from sqlalchemy.orm import Session
-from app.vital_extractor_core.extraction_service import run_extraction
 from app.crud.vitals import get_or_create_vital
 from app.models.report_vitals import ReportVital
 from app.models.medical_reports import MedicalReport
 
+try:
+    from app.vital_extractor_core.extraction_service import run_extraction
+    _EXTRACTOR_AVAILABLE = True
+except Exception as _e:
+    import logging
+    logging.getLogger(__name__).warning(f"Vital extractor unavailable: {_e}")
+    _EXTRACTOR_AVAILABLE = False
+
 
 def process_report(db: Session, report_id: int, file_path: str):
+    if not _EXTRACTOR_AVAILABLE:
+        return {"total": 0, "error": "Vital extractor not available"}
     result  = run_extraction(file_path, file_path.split("/")[-1].split("\\")[-1], use_ai=False)
     payload = result["payload"]
 
