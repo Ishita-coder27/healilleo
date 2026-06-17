@@ -4,7 +4,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { useAuth } from "../context/AuthContext";
 import "./Login.css";
 
-const API = "http://127.0.0.1:8000";
+const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function Login() {
   const navigate        = useNavigate();

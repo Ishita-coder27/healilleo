@@ -1,6 +1,6 @@
 // src/services/api.js
 
-const BASE = "http://localhost:8000";
+const BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 /**
  * Main chat call — sends query, user_id, and optional context summary.

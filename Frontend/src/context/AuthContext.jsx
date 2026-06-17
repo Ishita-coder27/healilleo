@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 
 const AuthContext = createContext();
-const API = "http://localhost:8000";
+const API = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 async function requestNotificationPermission() {
   if (!("Notification" in window)) return false;
