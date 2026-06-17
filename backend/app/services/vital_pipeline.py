@@ -1,31 +1,33 @@
 from sqlalchemy.orm import Session
-from app.AI.vital_service import extract_vitals_from_report
+from app.vital_extractor_core.extraction_service import run_extraction
 from app.crud.vitals import get_or_create_vital
 from app.models.report_vitals import ReportVital
 from app.models.medical_reports import MedicalReport
 
 
 def process_report(db: Session, report_id: int, file_path: str):
-    payload = extract_vitals_from_report(file_path)
+    result  = run_extraction(file_path, file_path.split("/")[-1].split("\\")[-1], use_ai=False)
+    payload = result["payload"]
 
+    patient_info = payload.get("patient_info", {})
     report = db.query(MedicalReport).filter(MedicalReport.id == report_id).first()
 
     # Update report metadata
-    report.patient_name = payload["patient_info"].get("patient_name")
-    report.patient_age = payload["patient_info"].get("age")
-    report.patient_gender = payload["patient_info"].get("gender")
-    report.report_date = payload["patient_info"].get("report_date")
-    report.doctor_name = payload["patient_info"].get("doctor")
+    report.patient_name   = patient_info.get("patient_name") or patient_info.get("Patient Name")
+    report.patient_age    = patient_info.get("age")          or patient_info.get("Age")
+    report.patient_gender = patient_info.get("gender")       or patient_info.get("Gender")
+    report.report_date    = patient_info.get("report_date")  or patient_info.get("Report Date")
+    report.doctor_name    = patient_info.get("doctor")       or patient_info.get("Doctor")
 
-    report.pdf_method = payload.get("pdf_method")
-    report.used_gemini = payload.get("used_gemini", False)
-    report.processed = True
+    report.pdf_method  = payload.get("pdf_method")
+    report.used_gemini = payload.get("used_gemini", result.get("used_ai", False))
+    report.processed   = True
 
     db.commit()
 
     results = []
 
-    for v in payload["vitals"]:
+    for v in payload.get("vitals", []):
         vital = get_or_create_vital(db, v["name"], v.get("category"))
 
         rv = ReportVital(
